@@ -1,180 +1,676 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>투두리스트</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Pretendard', sans-serif;
-      background-color: #f7f9fb;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* 사이드바 */
-    .sidebar {
-      width: 220px;
-      background-color: #fff;
-      padding: 30px 20px;
-      box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-    }
-    .logo {
-      font-size: 24px;
-      color: #3cb371;
-      font-weight: bold;
-      margin-bottom: 40px;
-    }
-    .category-title {
-      font-size: 14px;
-      margin-bottom: 10px;
-      color: #888;
-    }
-    .category {
-      list-style: none;
-      padding: 0;
-    }
-    .category li {
-      padding: 8px 12px;
-      margin: 6px 0;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .category li.active {
-      background-color: #e6f4ea;
-      color: #3cb371;
-      font-weight: bold;
-    }
-    .category li:hover {
-      background-color: #f0f0f0;
-    }
-
-    /* 메인 컨텐츠 */
-    .main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      background-color: #f7f9fb;
-    }
-
-    .header {
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .header h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .cards {
-      padding: 30px;
-      display: flex;
-      gap: 20px;
-    }
-    .card {
-      background-color: #fff;
-      border-radius: 12px;
-      padding: 20px;
-      width: 250px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    }
-    .card h3 {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 16px;
-      margin: 0 0 8px 0;
-    }
-    .card small {
-      color: #888;
-    }
-    .task-list {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0 0;
-    }
-    .task-list li {
-      margin: 8px 0;
-    }
-    .task-list input[type="checkbox"] {
-      margin-right: 8px;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
-      font-size: 14px;
-      color: #444;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: #fff;
-      padding: 8px 12px;
-      border-radius: 20px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>투두리스트</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#4ade80',secondary:'#a3e635'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+background-color: #f8f9fa;
+}
+.custom-checkbox {
+appearance: none;
+width: 18px;
+height: 18px;
+border: 2px solid #e2e8f0;
+border-radius: 4px;
+position: relative;
+cursor: pointer;
+transition: all 0.2s;
+}
+.custom-checkbox:checked {
+background-color: #4ade80;
+border-color: #4ade80;
+}
+.custom-checkbox:checked::after {
+content: '';
+position: absolute;
+left: 5px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.task-item:hover .task-actions,
+.category-item:hover .category-actions {
+opacity: 1;
+}
+.task-actions,
+.category-actions {
+opacity: 0;
+transition: opacity 0.2s;
+}
+.calendar-day {
+width: 40px;
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 50%;
+cursor: pointer;
+transition: all 0.2s;
+}
+.calendar-day:hover {
+background-color: #e6f7ef;
+}
+.calendar-day.active {
+background-color: #4ade80;
+color: white;
+}
+</style>
 </head>
 <body>
-  <div class="sidebar">
-    <div class="logo">logo</div>
-    <div class="category-title">카테고리</div>
-    <ul class="category">
-      <li class="active">❤️ 마음</li>
-      <li>⭐ 공부</li>
-      <li>🏃️‍♀️ 운동</li>
-      <li>📄 독서</li>
-      <li>+ 카테고리 추가</li>
-    </ul>
-  </div>
+<div class="flex min-h-screen">
+<!-- 사이드바 -->
+<div class="w-64 border-r border-gray-200 bg-white">
+<div class="p-4 border-b border-gray-200 flex items-center">
+<div class="font-['Pacifico'] text-primary text-xl">logo</div>
+<div class="w-8 h-8 flex items-center justify-center ml-auto">
+<i class="ri-menu-line text-gray-500"></i>
+</div>
+</div>
+<div class="p-4">
+<h2 class="text-sm font-medium text-gray-500 mb-2">카테고리</h2>
+<div class="space-y-1">
+<!-- 마음 카테고리 -->
+<div class="category-item flex items-center px-3 py-2 rounded bg-green-50">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-green-500">
+<i class="ri-heart-line"></i>
+</div>
+<span class="text-green-600 font-medium">마음</span>
+<div class="category-actions opacity-0 flex ml-auto">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+<!-- 공부 카테고리 -->
+<div class="category-item flex items-center px-3 py-2 rounded hover:bg-gray-50">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
+<i class="ri-book-open-line"></i>
+</div>
+<span>공부</span>
+<div class="category-actions opacity-0 flex ml-auto">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
 
-  <div class="main">
-    <div class="header">
-      <h2>투두리스트</h2>
-      <div class="menu">&#x2630;</div>
-    </div>
+<!-- 팀플 카테고리 -->
+<div class="category-item flex items-center px-3 py-2 rounded hover:bg-gray-50">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-indigo-500">
+<i class="ri-team-line"></i>
+</div>
+<span>팀플</span>
+<div class="category-actions opacity-0 flex ml-auto">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+<!-- 운동 카테고리 -->
+<div class="category-item flex items-center px-3 py-2 rounded hover:bg-gray-50">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-orange-500">
+<i class="ri-run-line"></i>
+</div>
+<span>운동</span>
+<div class="category-actions opacity-0 flex ml-auto">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+<!-- 독서 카테고리 -->
+<div class="category-item flex items-center px-3 py-2 rounded hover:bg-gray-50">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-purple-500">
+<i class="ri-book-read-line"></i>
+</div>
+<span>독서</span>
+<div class="category-actions opacity-0 flex ml-auto">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+</div>
+<button class="mt-4 flex items-center text-sm text-gray-600 hover:text-gray-900">
+<div class="w-5 h-5 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+<span>카테고리 추가</span>
+</button>
+</div>
+</div>
+<!-- 메인 콘텐츠 -->
+<div class="flex-1 bg-white">
+<div class="p-6">
+<div class="border-b border-gray-200 pb-4 mb-6">
+<h1 class="text-xl font-semibold">투두리스트</h1>
+</div>
+<div class="flex items-center mb-6">
+<h2 class="text-lg font-medium text-gray-900">5/21 오늘의 todo</h2>
+<span class="ml-2 text-sm text-gray-500">13개의 항목</span>
+</div>
+<!-- 카테고리별 투두 대시보드 -->
+<div class="overflow-x-auto pb-4 mb-8">
+<div class="flex gap-4 min-w-max">
+<!-- 운동 카드 -->
+<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-orange-500">
+<i class="ri-run-line"></i>
+</div>
+<h3 class="font-medium">운동</h3>
+</div>
+<span class="text-xs text-gray-500">3개 항목</span>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1" checked>
+<span class="ml-2 text-sm line-through text-gray-500">아침 조깅 30분</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">스트레칭 10분</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">근력 운동 20분</span>
+</li>
+</ul>
+<div class="flex items-center justify-center mt-3">
+<button class="text-sm text-gray-500 hover:text-primary flex items-center">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+추가하기
+</button>
+</div>
+</div>
+<!-- 마음 카드 -->
+<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-green-500">
+<i class="ri-heart-line"></i>
+</div>
+<h3 class="font-medium">마음</h3>
+</div>
+<span class="text-xs text-gray-500">2개 항목</span>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1" checked>
+<span class="ml-2 text-sm line-through text-gray-500">명상 10분 하기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">감사일기 작성하기</span>
+</li>
+</ul>
+<div class="flex items-center justify-center mt-3">
+<button class="text-sm text-gray-500 hover:text-primary flex items-center">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+추가하기
+</button>
+</div>
+</div>
+<!-- 공부 카드 -->
+<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
+<i class="ri-book-open-line"></i>
+</div>
+<h3 class="font-medium">공부</h3>
+</div>
+<span class="text-xs text-gray-500">5개 항목</span>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1" checked>
+<span class="ml-2 text-sm line-through text-gray-500">프로그래밍 강의 듣기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">영어 단어 30개 외우기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">알고리즘 문제 풀기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">포트폴리오 계획 세우기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">CS 공부하기</span>
+</li>
+</ul>
+<div class="flex items-center justify-center mt-3">
+<button class="text-sm text-gray-500 hover:text-primary flex items-center">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+추가하기
+</button>
+</div>
+</div>
+<!-- 독서 카드 -->
+<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit w-[300px]">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-purple-500">
+<i class="ri-book-read-line"></i>
+</div>
+<h3 class="font-medium">독서</h3>
+</div>
+<span class="text-xs text-gray-500">3개 항목</span>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1" checked>
+<span class="ml-2 text-sm line-through text-gray-500">아침 독서 30분</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">독서 노트 정리하기</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">새로운 책 선정하기</span>
+</li>
+</ul>
+<div class="flex items-center justify-center mt-3">
+<button class="text-sm text-gray-500 hover:text-primary flex items-center">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+추가하기
+</button>
+</div>
+</div>
 
-    <div class="cards">
-      <!-- 카드 1: 마음 -->
-      <div class="card">
-        <h3>❤️ 마음 <small>3개 항목</small></h3>
-        <ul class="task-list">
-          <li><input type="checkbox" checked> 명상 10분 하기</li>
-          <li><input type="checkbox"> 감사일기 작성하기</li>
-          <li><input type="checkbox"> 긍정적인 생각 유지하기</li>
-        </ul>
-      </div>
-
-      <!-- 카드 2: 공부 -->
-      <div class="card">
-        <h3>⭐ 공부 <small>4개 항목</small></h3>
-        <ul class="task-list">
-          <li><input type="checkbox" checked> 프로그래밍 강의 듣기</li>
-          <li><input type="checkbox"> 영어 단어 30개 외우기</li>
-          <li><input type="checkbox"> 알고리즘 문제 풀기</li>
-          <li><input type="checkbox"> 프로젝트 계획 세우기</li>
-        </ul>
-      </div>
-
-      <!-- 카드 3: 운동 -->
-      <div class="card">
-        <h3>🏃️‍♀️ 운동 <small>3개 항목</small></h3>
-        <ul class="task-list">
-          <li><input type="checkbox" checked> 아침 조깅 30분</li>
-          <li><input type="checkbox"> 스트레칭 10분</li>
-          <li><input type="checkbox"> 근력 운동 20분</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer">
-    ↺ 다시 시작 <span style="font-size: 12px;">R</span>
-  </div>
+<!-- 팀플 카드 -->
+<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit w-[300px]">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center">
+<div class="w-6 h-6 flex items-center justify-center mr-2 text-indigo-500">
+<i class="ri-team-line"></i>
+</div>
+<h3 class="font-medium">팀플</h3>
+</div>
+<span class="text-xs text-gray-500">4개 항목</span>
+</div>
+<ul class="space-y-2">
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1" checked>
+<span class="ml-2 text-sm line-through text-gray-500">팀 회의 참석</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">발표자료 준비</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">팀원 피드백 정리</span>
+</li>
+<li class="flex items-start">
+<input type="checkbox" class="custom-checkbox mt-1">
+<span class="ml-2 text-sm">다음 일정 조율하기</span>
+</li>
+</ul>
+<div class="flex items-center justify-center mt-3">
+<button class="text-sm text-gray-500 hover:text-primary flex items-center">
+<div class="w-4 h-4 flex items-center justify-center mr-1">
+<i class="ri-add-line"></i>
+</div>
+추가하기
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 캘린더 및 일일 투두 -->
+<div class="grid grid-cols-2 gap-6 mt-8">
+<!-- 캘린더 -->
+<div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-medium">5월 2025</h3>
+<div class="flex">
+<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-900 !rounded-button">
+<i class="ri-arrow-left-s-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-900 !rounded-button">
+<i class="ri-arrow-right-s-line"></i>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-1 mb-2">
+<div class="text-center text-sm font-medium text-gray-600">SUN</div>
+<div class="text-center text-sm font-medium text-gray-600">MON</div>
+<div class="text-center text-sm font-medium text-gray-600">TUE</div>
+<div class="text-center text-sm font-medium text-gray-600">WED</div>
+<div class="text-center text-sm font-medium text-gray-600">THU</div>
+<div class="text-center text-sm font-medium text-gray-600">FRI</div>
+<div class="text-center text-sm font-medium text-gray-600">SAT</div>
+</div>
+<div class="grid grid-cols-7 gap-1">
+<!-- 1주차 -->
+<div class="flex justify-center">
+<div class="calendar-day text-gray-400">27</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day text-gray-400">28</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day text-gray-400">29</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day text-gray-400">30</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">1</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">2</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">3</div>
+</div>
+<!-- 2주차 -->
+<div class="flex justify-center">
+<div class="calendar-day bg-white">4</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">5</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">6</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">7</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">8</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">9</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">10</div>
+</div>
+<!-- 3주차 -->
+<div class="flex justify-center">
+<div class="calendar-day bg-white">11</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">12</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">13</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">14</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">15</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">16</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">17</div>
+</div>
+<!-- 4주차 -->
+<div class="flex justify-center">
+<div class="calendar-day bg-white">18</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">19</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day active bg-primary text-white">20</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day today border-2 border-primary/30 bg-white">21</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">22</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">23</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">24</div>
+</div>
+<!-- 5주차 -->
+<div class="flex justify-center">
+<div class="calendar-day bg-white">25</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">26</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">27</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">28</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">29</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">30</div>
+</div>
+<div class="flex justify-center">
+<div class="calendar-day bg-white">31</div>
+</div>
+</div>
+</div>
+<!-- 일일 투두 -->
+<div class="bg-white border border-gray-200 rounded-lg p-5 shadow-sm">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-medium">5/20</h3>
+<span class="text-xs text-gray-500">10개의 항목</span>
+</div>
+<!-- 마음 카테고리 -->
+<div class="mb-5">
+<div class="flex items-center justify-between mb-2">
+<h4 class="text-sm font-medium text-green-500">마음</h4>
+<button class="text-sm text-gray-500 hover:text-primary flex items-center !rounded-button">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-add-line"></i>
+</div>
+</button>
+</div>
+<ul class="space-y-2">
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox">
+<span class="ml-2 text-sm">명상 10분 하기</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox" checked>
+<span class="ml-2 text-sm line-through text-gray-500">감사일기 작성하기</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+</ul>
+</div>
+<!-- 공부 카테고리 -->
+<div class="mb-5">
+<div class="flex items-center justify-between mb-2">
+<h4 class="text-sm font-medium text-blue-500">공부</h4>
+<button class="text-sm text-gray-500 hover:text-primary flex items-center !rounded-button">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-add-line"></i>
+</div>
+</button>
+</div>
+<ul class="space-y-2">
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox">
+<span class="ml-2 text-sm">프로그래밍 강의 듣기</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox">
+<span class="ml-2 text-sm">영어 단어 30개 외우기</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+</ul>
+</div>
+<!-- 운동 카테고리 -->
+<div>
+<div class="flex items-center justify-between mb-2">
+<h4 class="text-sm font-medium text-orange-500">운동</h4>
+<button class="text-sm text-gray-500 hover:text-primary flex items-center !rounded-button">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-add-line"></i>
+</div>
+</button>
+</div>
+<ul class="space-y-2">
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox" checked>
+<span class="ml-2 text-sm line-through text-gray-500">아침 조깅 30분</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+<li class="task-item flex items-center justify-between">
+<div class="flex items-center">
+<input type="checkbox" class="custom-checkbox">
+<span class="ml-2 text-sm">스트레칭 10분</span>
+</div>
+<div class="task-actions flex">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+<i class="ri-edit-line"></i>
+</button>
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// 체크박스 기능
+const checkboxes = document.querySelectorAll('.custom-checkbox');
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const taskText = this.nextElementSibling;
+if (this.checked) {
+taskText.classList.add('line-through', 'text-gray-500');
+} else {
+taskText.classList.remove('line-through', 'text-gray-500');
+}
+});
+});
+// 캘린더 날짜 선택 기능
+const calendarDays = document.querySelectorAll('.calendar-day');
+const todoTitle = document.querySelector('.bg-white.border.border-gray-200.rounded-lg.p-5.shadow-sm h3');
+calendarDays.forEach(day => {
+day.addEventListener('click', function() {
+// 현재 선택된 날짜 클래스 제거
+document.querySelector('.calendar-day.active')?.classList.remove('active', 'bg-primary', 'text-white');
+// 새로 선택한 날짜에 클래스 추가
+this.classList.add('active', 'bg-primary', 'text-white');
+// 오른쪽 대시보드 날짜 업데이트
+const selectedDate = this.textContent;
+todoTitle.textContent = `5/${selectedDate}`;
+});
+});
+// 카테고리 선택 기능
+const categoryItems = document.querySelectorAll('.sidebar .flex.items-center.px-3.py-2');
+categoryItems.forEach(item => {
+item.addEventListener('click', function() {
+// 현재 선택된 카테고리 클래스 제거
+document.querySelector('.sidebar .flex.items-center.px-3.py-2.bg-green-50')?.classList.remove('bg-green-50');
+// 새로 선택한 카테고리에 클래스 추가
+this.classList.add('bg-green-50');
+});
+});
+});
+</script>
 </body>
 </html>
