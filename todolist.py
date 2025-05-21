@@ -46,4 +46,4 @@ def taskmain():
     return render_template("taskmain.html")
 
 if __name__ == '__main__':
-    todolist.run(host='127.0.0.1', port=5000)
+    todolist.run(host='127.0.0.1', port=5500)
