@@ -47,3 +47,5 @@ def taskmain():
 
 if __name__ == '__main__':
     todolist.run(host='127.0.0.1', port=5500)
+
+## 여기부터 DB를 위한 코드
