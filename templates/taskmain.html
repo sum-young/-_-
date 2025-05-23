@@ -6,7 +6,8 @@
 <title>투두리스트</title>
 <script src="https://cdn.tailwindcss.com/3.4.16"></script>
 <script>tailwind.config={theme:{extend:{colors:{primary:'#4ade80',secondary:'#a3e635'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
@@ -177,190 +178,210 @@ color: white;
 <h2 class="text-lg font-medium text-gray-900">5/21 오늘의 todo</h2>
 <span class="ml-2 text-sm text-gray-500">13개의 항목</span>
 </div>
-<!-- 카테고리별 투두 대시보드 -->
-<div class="overflow-x-auto pb-4 mb-8">
-<div class="flex gap-4 min-w-max">
-<!-- 운동 카드 -->
-<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center">
-<div class="w-6 h-6 flex items-center justify-center mr-2 text-orange-500">
-<i class="ri-run-line"></i>
-</div>
-<h3 class="font-medium">운동</h3>
-</div>
-<span class="text-xs text-gray-500">3개 항목</span>
-</div>
-<ul class="space-y-2">
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1" checked>
-<span class="ml-2 text-sm line-through text-gray-500">아침 조깅 30분</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">스트레칭 10분</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">근력 운동 20분</span>
-</li>
-</ul>
-<div class="flex items-center justify-center mt-3">
-<button class="text-sm text-gray-500 hover:text-primary flex items-center">
-<div class="w-4 h-4 flex items-center justify-center mr-1">
-<i class="ri-add-line"></i>
-</div>
-추가하기
-</button>
-</div>
-</div>
-<!-- 마음 카드 -->
-<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center">
-<div class="w-6 h-6 flex items-center justify-center mr-2 text-green-500">
-<i class="ri-heart-line"></i>
-</div>
-<h3 class="font-medium">마음</h3>
-</div>
-<span class="text-xs text-gray-500">2개 항목</span>
-</div>
-<ul class="space-y-2">
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1" checked>
-<span class="ml-2 text-sm line-through text-gray-500">명상 10분 하기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">감사일기 작성하기</span>
-</li>
-</ul>
-<div class="flex items-center justify-center mt-3">
-<button class="text-sm text-gray-500 hover:text-primary flex items-center">
-<div class="w-4 h-4 flex items-center justify-center mr-1">
-<i class="ri-add-line"></i>
-</div>
-추가하기
-</button>
-</div>
-</div>
-<!-- 공부 카드 -->
-<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center">
-<div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
-<i class="ri-book-open-line"></i>
-</div>
-<h3 class="font-medium">공부</h3>
-</div>
-<span class="text-xs text-gray-500">5개 항목</span>
-</div>
-<ul class="space-y-2">
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1" checked>
-<span class="ml-2 text-sm line-through text-gray-500">프로그래밍 강의 듣기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">영어 단어 30개 외우기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">알고리즘 문제 풀기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">포트폴리오 계획 세우기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">CS 공부하기</span>
-</li>
-</ul>
-<div class="flex items-center justify-center mt-3">
-<button class="text-sm text-gray-500 hover:text-primary flex items-center">
-<div class="w-4 h-4 flex items-center justify-center mr-1">
-<i class="ri-add-line"></i>
-</div>
-추가하기
-</button>
-</div>
-</div>
-<!-- 독서 카드 -->
-<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit w-[300px]">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center">
-<div class="w-6 h-6 flex items-center justify-center mr-2 text-purple-500">
-<i class="ri-book-read-line"></i>
-</div>
-<h3 class="font-medium">독서</h3>
-</div>
-<span class="text-xs text-gray-500">3개 항목</span>
-</div>
-<ul class="space-y-2">
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1" checked>
-<span class="ml-2 text-sm line-through text-gray-500">아침 독서 30분</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">독서 노트 정리하기</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">새로운 책 선정하기</span>
-</li>
-</ul>
-<div class="flex items-center justify-center mt-3">
-<button class="text-sm text-gray-500 hover:text-primary flex items-center">
-<div class="w-4 h-4 flex items-center justify-center mr-1">
-<i class="ri-add-line"></i>
-</div>
-추가하기
-</button>
-</div>
-</div>
 
-<!-- 팀플 카드 -->
-<div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit w-[300px]">
-<div class="flex items-center justify-between mb-3">
-<div class="flex items-center">
-<div class="w-6 h-6 flex items-center justify-center mr-2 text-indigo-500">
-<i class="ri-team-line"></i>
+
+<!----------------------------스크롤바 조작을 위해 카드들을 하나의div로 묶음----------------------------->
+<!-- 카테고리별 오늘의 투두 대시보드 -->
+<div class="overflow-x-auto pb-4 mb-8">
+  <!-- 스크롤용 래퍼 -->
+  <div class="todo-row flex gap-4">
+    <!-- 운동 카드 -->
+    <div class="card bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center">
+          <div class="w-6 h-6 flex items-center justify-center mr-2 text-orange-500">
+            <i class="ri-run-line"></i>
+          </div>
+          <h3 class="font-medium">운동</h3>
+        </div>
+        <span class="text-xs text-gray-500">3개 항목</span>
+      </div>
+
+      <ul class="space-y-2">
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1" checked>
+          <span class="ml-2 text-sm line-through text-gray-500">아침 조깅 30분</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">스트레칭 10분</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">근력 운동 20분</span>
+        </li>
+      </ul>
+
+      <div class="flex items-center justify-center mt-3">
+        <button class="text-sm text-gray-500 hover:text-primary flex items-center">
+          <div class="w-4 h-4 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          추가하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 마음 카드 -->
+    <div class="card bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center">
+          <div class="w-6 h-6 flex items-center justify-center mr-2 text-green-500">
+            <i class="ri-heart-line"></i>
+          </div>
+          <h3 class="font-medium">마음</h3>
+        </div>
+        <span class="text-xs text-gray-500">2개 항목</span>
+      </div>
+
+      <ul class="space-y-2">
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1" checked>
+          <span class="ml-2 text-sm line-through text-gray-500">명상 10분 하기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">감사일기 작성하기</span>
+        </li>
+      </ul>
+
+      <div class="flex items-center justify-center mt-3">
+        <button class="text-sm text-gray-500 hover:text-primary flex items-center">
+          <div class="w-4 h-4 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          추가하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 공부 카드 -->
+    <div class="card bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center">
+          <div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
+            <i class="ri-book-open-line"></i>
+          </div>
+          <h3 class="font-medium">공부</h3>
+        </div>
+        <span class="text-xs text-gray-500">5개 항목</span>
+      </div>
+
+      <ul class="space-y-2">
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1" checked>
+          <span class="ml-2 text-sm line-through text-gray-500">프로그래밍 강의 듣기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">영어 단어 30개 외우기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">알고리즘 문제 풀기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">포트폴리오 계획 세우기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">CS 공부하기</span>
+        </li>
+      </ul>
+
+      <div class="flex items-center justify-center mt-3">
+        <button class="text-sm text-gray-500 hover:text-primary flex items-center">
+          <div class="w-4 h-4 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          추가하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 독서 카드 -->
+    <div class="card bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center">
+          <div class="w-6 h-6 flex items-center justify-center mr-2 text-purple-500">
+            <i class="ri-book-read-line"></i>
+          </div>
+          <h3 class="font-medium">독서</h3>
+        </div>
+        <span class="text-xs text-gray-500">3개 항목</span>
+      </div>
+
+      <ul class="space-y-2">
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1" checked>
+          <span class="ml-2 text-sm line-through text-gray-500">아침 독서 30분</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">독서 노트 정리하기</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">새로운 책 선정하기</span>
+        </li>
+      </ul>
+
+      <div class="flex items-center justify-center mt-3">
+        <button class="text-sm text-gray-500 hover:text-primary flex items-center">
+          <div class="w-4 h-4 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          추가하기
+        </button>
+      </div>
+    </div>
+
+    <!-- 팀플 카드 -->
+    <div class="card bg-white border border-gray-200 rounded-lg p-4 shadow-sm h-fit">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center">
+          <div class="w-6 h-6 flex items-center justify-center mr-2 text-indigo-500">
+            <i class="ri-team-line"></i>
+          </div>
+          <h3 class="font-medium">팀플</h3>
+        </div>
+        <span class="text-xs text-gray-500">4개 항목</span>
+      </div>
+
+      <ul class="space-y-2">
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1" checked>
+          <span class="ml-2 text-sm line-through text-gray-500">팀 회의 참석</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">발표자료 준비</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">팀원 피드백 정리</span>
+        </li>
+        <li class="flex items-start">
+          <input type="checkbox" class="custom-checkbox mt-1">
+          <span class="ml-2 text-sm">다음 일정 조율하기</span>
+        </li>
+      </ul>
+
+      <div class="flex items-center justify-center mt-3">
+        <button class="text-sm text-gray-500 hover:text-primary flex items-center">
+          <div class="w-4 h-4 flex items-center justify-center mr-1">
+            <i class="ri-add-line"></i>
+          </div>
+          추가하기
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-<h3 class="font-medium">팀플</h3>
-</div>
-<span class="text-xs text-gray-500">4개 항목</span>
-</div>
-<ul class="space-y-2">
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1" checked>
-<span class="ml-2 text-sm line-through text-gray-500">팀 회의 참석</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">발표자료 준비</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">팀원 피드백 정리</span>
-</li>
-<li class="flex items-start">
-<input type="checkbox" class="custom-checkbox mt-1">
-<span class="ml-2 text-sm">다음 일정 조율하기</span>
-</li>
-</ul>
-<div class="flex items-center justify-center mt-3">
-<button class="text-sm text-gray-500 hover:text-primary flex items-center">
-<div class="w-4 h-4 flex items-center justify-center mr-1">
-<i class="ri-add-line"></i>
-</div>
-추가하기
-</button>
-</div>
-</div>
-</div>
-</div>
+<!------------------------------------------ ---------------------------------->
+
+
 <!-- 캘린더 및 일일 투두 -->
 <div class="grid grid-cols-2 gap-6 mt-8">
 <!-- 캘린더 -->
