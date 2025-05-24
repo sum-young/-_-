@@ -1,5 +1,4 @@
 <!--투두리스트 본 페이지: 달력 있고, 할 일 뜨는 페이지-->
-<!--투두리스트 본 페이지: 달력 있고, 할 일 뜨는 페이지-->
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -15,6 +14,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- ✅ 연필/휴지통 ICON -->
+    <title>카테고리 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- ✅ Tailwind CDN (디자인 유지용, 필요 시 포함) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
 
     <!--css코드: 건들지 마세요 (디자인같은거입니다..)-->
     <style>
@@ -122,10 +128,14 @@
                         </div>
                         <span class="text-green-600 font-medium">마음</span>
                         <div class="category-actions opacity-0 flex ml-auto">
-                            <!--편집버튼-->
-                            <button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+
+                            <!-- ✅ 수정: readonly 속성 추가(편집버튼) -->
+                        <input type="text" readonly class="text-green-600 font-medium category-name bg-transparent focus:outline-none flex-grow" value="마음" />
+                        <div class="category-actions flex ml-auto">
+                            <button class="edit-btn w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
                                 <i class="ri-edit-line"></i>
                             </button>
+
                             <!--삭제버튼-->
                             <button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
                                 <i class="ri-delete-bin-line"></i>
@@ -189,6 +199,7 @@
                     </div>
                 </div>
             </div>
+
             <!--이 코드가 캘린더랑 일일 투두 나란히 띄워주고 있으니 삭제하면 안돼요!-->
             <div class="flex-1 min-h-0 flex flex-col">
                 <div class="grid grid-cols-2 gap-6 h-full min-h-0 flex-1">
@@ -422,71 +433,69 @@
 
 
 
-        //✅ 카테고리 관련 기능
-        document.addEventListener('DOMContentLoaded', function () {
-            let selectedCategoryItem = document.querySelector('.category-item.bg-green-50');
+    //✅ 카테고리 관련 기능
+    document.addEventListener('DOMContentLoaded', function () {
+    let selectedCategoryItem = document.querySelector('.category-item.bg-green-50');
 
-            function enableCategoryEvents(container) {
-                const editBtn = container.querySelector('.edit-btn');
-                const deleteBtn = container.querySelector('.delete-btn');
-                const nameInput = container.querySelector('.category-name');
+    function enableCategoryEvents(container) {
+      const deleteBtn = container.querySelector('.delete-btn');
+      const editBtn = container.querySelector('.edit-btn');
+      const nameInput = container.querySelector('.category-name');
 
-                container.addEventListener('click', function () {
-                    if (selectedCategoryItem) {
-                        selectedCategoryItem.classList.remove('bg-green-50');
-                    }
-                    container.classList.add('bg-green-50');
-                    selectedCategoryItem = container;
-                });
+      container.addEventListener('click', function () {
+        if (selectedCategoryItem) {
+          selectedCategoryItem.classList.remove('bg-green-50');
+        }
+        container.classList.add('bg-green-50');
+        selectedCategoryItem = container;
+      });
 
-                editBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    nameInput.removeAttribute('readonly');
-                    nameInput.focus();
-                    nameInput.addEventListener('blur', () => {
-                        nameInput.setAttribute('readonly', 'readonly');
-                    }, { once: true });
-                });
+      // ✅연필 아이콘 클릭 시 입력 가능
+      // ✅ 수정 기능: 연필 클릭 시 수정 가능
+      editBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        nameInput.removeAttribute('readonly');
+        nameInput.focus();
+        nameInput.addEventListener('blur', () => {
+          nameInput.setAttribute('readonly', true);     //, 포커스 벗어나면 다시 잠금
+        }, { once: true });
+      });
 
-                deleteBtn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    if (selectedCategoryItem === container) {
-                        selectedCategoryItem = null;
-                    }
-                    container.remove();
-                });
+      // ✅ 휴지통 아이콘 클릭 시 삭제
+      deleteBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (selectedCategoryItem === container) {
+          selectedCategoryItem = null;
+        }
+        container.remove();
+      });
+    }
 
-                container.addEventListener('mouseenter', () => {
-                    container.querySelector('.category-actions').classList.remove('opacity-0');
-                });
-                container.addEventListener('mouseleave', () => {
-                    container.querySelector('.category-actions').classList.add('opacity-0');
-                });
-            }
+    //✅ 초기 항목에도 수정/삭제 이벤트 바인딩
+    document.querySelectorAll('.category-item').forEach(enableCategoryEvents);
 
-            document.querySelectorAll('.category-item').forEach(enableCategoryEvents);
-
-            document.getElementById('addCategoryBtn').addEventListener('click', function () {
-                const div = document.createElement('div');
-                div.className = 'category-item flex items-center px-3 py-2 rounded hover:bg-gray-50';
-                div.innerHTML = `
-                    <div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
-                        <i class="ri-folder-line"></i>
-                    </div>
-                    <input type="text" class="category-name font-medium bg-transparent focus:outline-none" value="새 카테고리" />
-                    <div class="category-actions opacity-0 flex ml-auto">
-                        <button class="edit-btn w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
-                            <i class="ri-edit-line"></i>
-                        </button>
-                        <button class="delete-btn w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
-                            <i class="ri-delete-bin-line"></i>
-                        </button>
-                    </div>`;
-                document.getElementById('categoryItems').appendChild(div);
-                enableCategoryEvents(div);
-            });
-        });
-
+    //✅ 추가 기능: 버튼 클릭 시 새 카테고리 생성
+    document.getElementById('addCategoryBtn').addEventListener('click', function () {
+      const div = document.createElement('div');
+      div.className = 'category-item flex items-center px-3 py-2 rounded hover:bg-gray-50';
+      div.innerHTML = `
+        <div class="w-6 h-6 flex items-center justify-center mr-2 text-blue-500">
+          <i class="ri-folder-line"></i>
+        </div>
+        <input type="text" readonly class="category-name font-medium bg-transparent focus:outline-none flex-grow" value="새 카테고리" />
+        <div class="category-actions flex ml-auto">
+          <button class="edit-btn w-6 h-6 flex items-center justify-center text-gray-400 hover:text-gray-600">
+            <i class="ri-edit-line"></i>
+          </button>
+          <button class="delete-btn w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>`;
+      document.getElementById('categoryItems').appendChild(div);
+      enableCategoryEvents(div);
+    });
+  });
     </script>
+
 </body>
 </html>
